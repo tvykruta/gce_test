@@ -1,0 +1,32 @@
+#IncludeRegexLine: ^[ 	]*#[ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/tvykruta/src/gflags_demo/main.cc
+iostream
+-
+gflags/gflags.h
+-
+
+libs/gflags/include/gflags/gflags.h
+string
+-
+vector
+-
+gflags_declare.h
+libs/gflags/include/gflags/gflags_declare.h
+
+libs/gflags/include/gflags/gflags_declare.h
+string
+-
+stdint.h
+-
+sys/types.h
+-
+inttypes.h
+-
+

@@ -10,7 +10,7 @@ val parsedData = data.map { line =>
 }
 
 // Run training algorithm to build the model
-val numIterations = 60
+val numIterations = 2
 val model = SVMWithSGD.train(parsedData, numIterations, 0.025, .1, 1.0,
     Array[Double](1, 1, 1, 1, 1, 1, 1))
 
