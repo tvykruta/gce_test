@@ -1,5 +1,0 @@
-/home/tvykruta/src/build/libs/gflags/CMakeFiles/gflags.dir
-/home/tvykruta/src/build/libs/gflags/CMakeFiles/gflags-static.dir
-/home/tvykruta/src/build/gflags_demo/CMakeFiles/gflags_demo.dir
-/home/tvykruta/src/build/libs/gflags/CMakeFiles/gflags_nothreads.dir
-/home/tvykruta/src/build/libs/gflags/CMakeFiles/gflags_nothreads-static.dir

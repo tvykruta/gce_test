@@ -1,1 +1,0 @@
-/usr/bin/c++   -O3 -DNDEBUG    CMakeFiles/gflags_demo.dir/main.cc.o  -o gflags_demo -rdynamic ../../libs/gflags/build/lib/libgflags.a -pthread 
