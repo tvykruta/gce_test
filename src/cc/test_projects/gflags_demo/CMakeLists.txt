@@ -6,5 +6,5 @@ include_directories (${gflags_INCLUDE_DIR})
 
 add_executable (gflags_demo main.cc)
 
-#target_link_libraries (gflags_demo gflags -L~/src/libs/gflags/build/lib/)
-target_link_libraries(gflags_demo ~/src/libs/gflags/build/lib/libgflags.a -pthread)
+#target_link_libraries (gflags_demo gflags -L~/src_cc/libs/gflags/build/lib/)
+target_link_libraries(gflags_demo ~/gce_test/src/cc/test_projects/libs/gflags/build/lib/libgflags.a -pthread)

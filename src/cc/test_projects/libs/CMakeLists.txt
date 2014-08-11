@@ -1,1 +1,1 @@
-subdirs(gflags)
+add_subdirectory(gflags)
