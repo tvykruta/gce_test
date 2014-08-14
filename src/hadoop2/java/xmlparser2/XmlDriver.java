@@ -1,3 +1,7 @@
+// Copyright 2014
+// author: tvykruta
+//
+// Parses LIDC XML data and generates histograms.
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import javax.xml.stream.XMLInputFactory;
@@ -21,6 +25,7 @@ import org.apache.hadoop.mapreduce.lib.input.FileSplit;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.mapreduce.lib.output.TextOutputFormat;
+
 public class XmlDriver
 {
     public static class XmlInputFormat1 extends TextInputFormat {
@@ -123,6 +128,8 @@ public class XmlDriver
             }
         }
     }
+
+    // Mapper parses an XML block and writes out histogram data.
     public static class Map extends Mapper<LongWritable, Text,
     Text, Text> {
         @Override
@@ -180,6 +187,7 @@ public class XmlDriver
             }
         }
     }
+    // Simple reducer that sums mapper output.
     public static class Reduce
     extends Reducer<Text, Text, Text, Text> {
         @Override
@@ -204,9 +212,11 @@ public class XmlDriver
             context.write(key, new Text(Integer.toString(sum)));
         }
     }
+
     public static void main(String[] args) throws Exception
     {
         Configuration conf = new Configuration();
+        // Use <nonNodule> here to count non-nodules.
         conf.set("xmlinput.start", "<unblindedReadNodule>");
         conf.set("xmlinput.end", "</unblindedReadNodule>");
         Job job = new Job(conf);
