@@ -138,7 +138,6 @@ public class XmlDriver
     }
 }
 
-
 public static class Map extends Mapper<LongWritable, Text,
 Text, Text> {
     @Override
@@ -152,29 +151,30 @@ Text, Text> {
             XMLStreamReader reader =
                 XMLInputFactory.newInstance().createXMLStreamReader(new
                         ByteArrayInputStream(document.getBytes()));
-            String propertyName = "";
             String propertyValue = "";
             String currentElement = "";
+            boolean insideCharacteristics = false;
             while (reader.hasNext()) {
                 int code = reader.next();
                 switch (code) {
-                case XMLStreamConstants.START_ELEMENT: //START_ELEMENT:
+                case XMLStreamConstants.START_ELEMENT:
                     currentElement = reader.getLocalName();
-                    break;
-                case XMLStreamConstants.CHARACTERS: //CHARACTERS:
-                    if (currentElement.equalsIgnoreCase("name")) {
-                        propertyName += reader.getText();
-                        System.out.println("propertName"+propertyName);
-                    } else if (currentElement.equalsIgnoreCase("value")) {
-                        propertyValue += reader.getText();
-                        System.out.println("propertyValue"+propertyValue);
+                    System.out.println("START_ELEMENT: " + currentElement);
+                    if (currentElement == "characteristics") {
+                      context.write(new Text("nodule"), new Text("1"));  
                     }
                     break;
+                case XMLStreamConstants.CHARACTERS:
+                    propertyValue = reader.getText();
+                    propertyValue = propertyValue.replaceAll("[\n\r ]", "");
+                    System.out.println("CHARACTERS: " + propertyValue);
+                    String outKey = currentElement + "_" + propertyValue;
+                    context.write(new Text(outKey.trim()), new Text("1"));                    
+                    break;
                 }
+
             }
             reader.close();
-            context.write(new Text(propertyName.trim()), new Text(propertyValue.trim()));
-
         }
         catch(Exception e){
             throw new IOException(e);
@@ -189,42 +189,33 @@ extends Reducer<Text, Text, Text, Text> {
     protected void setup(
             Context context)
     throws IOException, InterruptedException {
-        context.write(new Text("<configuration>"), null);
     }
 
     @Override
     protected void cleanup(
             Context context)
     throws IOException, InterruptedException {
-        context.write(new Text("</configuration>"), null);
     }
 
     private Text outputKey = new Text();
     public void reduce(Text key, Iterable<Text> values,
             Context context)
     throws IOException, InterruptedException {
-        for (Text value : values) {
-            outputKey.set(constructPropertyXml(key, value));
-
-            context.write(outputKey, null);
-        }
-    }
-
-    public static String constructPropertyXml(Text name, Text value) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("<property><name>").append(name)
-        .append("</name><value>").append(value)
-        .append("</value></property>");
-        return sb.toString();
-    }
+      int sum = 0;
+      for (Text value : values) {
+        int foo = Integer.parseInt(value.toString());
+        sum += foo;
+      }
+      context.write(key, new Text(Integer.toString(sum)));
+  }
 }
 
 public static void main(String[] args) throws Exception
 {
     Configuration conf = new Configuration();
 
-    conf.set("xmlinput.start", "<property>");
-    conf.set("xmlinput.end", "</property>");
+    conf.set("xmlinput.start", "<characteristics>");
+    conf.set("xmlinput.end", "</characteristics>");
     Job job = new Job(conf);
     job.setJarByClass(XmlDriver.class);
     job.setOutputKeyClass(Text.class);
@@ -235,6 +226,9 @@ public static void main(String[] args) throws Exception
 
     job.setInputFormatClass(XmlInputFormat1.class);
     job.setOutputFormatClass(TextOutputFormat.class);
+
+    System.out.println("args0: " + args[0]);
+    System.out.println("args1: " + args[1]);
 
     FileInputFormat.addInputPath(job, new Path(args[0]));
     FileOutputFormat.setOutputPath(job, new Path(args[1]));
